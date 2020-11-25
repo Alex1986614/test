@@ -1,20 +1,34 @@
 <template>
     <div class="content">
-        <div class="comment-item">
-            <div>{{post.id}}</div>
-            <div>{{post.title}}</div>
-            <div>{{post.body}}</div>
-            <div><button class="btn btn-info" @click.prevent="addComment()">Add comment</button></div>
+        <div class="">
+            <div class="d-flex justify-content-between mb-2">
+                <div>{{post.id}}</div>
+                <div>{{post.title}}</div>
+                <div>{{post.body}}</div>
+                <div><button class="btn btn-info" @click.prevent="addComment1()">Comment</button></div>
+            </div>
+            <div v-if="visible1">
+                <textarea v-model="comment" style="width: 100%;"></textarea>
+                <button class="btn btn-success" @click.prevent="confirm(post.id, null)">Confirm</button>
+            </div>
         </div>
+        
         <div v-for="cmt in post.comments" :key="cmt.id" class="cmts">
-            <div>{{cmt.content}}</div>
-            <div>{{cmt.updated_at}}</div>
-            <button class="btn btn-danger" @click.prevent="del(cmt.id)">Delete</button>
+            <div class="d-flex justify-content-between mb-2" v-bind:style="{marginLeft: (cmt.redepth * 20) +'px'}">
+                <div>{{cmt.content}}</div>
+                <div>{{cmt.updated_at}}</div>
+                <div>
+                    <button class="btn btn-info" @click.prevent="addComment2(cmt.id)">Comment</button>
+                    <button class="btn btn-danger" @click.prevent="del(cmt.id)">Delete</button>
+                </div>
+            </div>
+            
+            <div v-if="visible2 && cmt.id == curSelected">
+                <textarea v-model="comment" style="width: 100%;"></textarea>
+                <button class="btn btn-success" @click.prevent="confirm(post.id, cmt)">Confirm</button>
+            </div>
         </div>
-        <div v-if="visible">
-            <textarea v-model="comment" style="width: 100%;"></textarea>
-            <button class="btn btn-success" @click.prevent="confirm(post.id)">Confirm</button>
-        </div>
+        
     </div>
 </template>
 
@@ -23,27 +37,34 @@
     export default {
         name: "comment",
         props:{
-            post:{},
-            comment: ''
+            post:{}
         },
         data() {
             return {
-                visible: false
+                comment: '',
+                visible1: false,
+                visible2: false,
+                curSelected: null
             }
         },
         created() {
         },
         methods: {
-            addComment: function(){
-                this.visible = !this.visible;
+            addComment1: function(){
+                this.visible1 = !this.visible1;
             },
 
-            confirm: function(id) {
+            addComment2: function(id){
+                this.visible2 = !this.visible2;
+                this.curSelected = id;
+            },
+
+            confirm: function(postId, parent) {
                 let uri = "api/comments/create";
                 let payload = {
                     content: this.comment,
-                    reply: '',
-                    post_id: id
+                    parent: parent,
+                    post_id: postId
                 };
 
                 this.axios.post(uri, payload)
@@ -72,17 +93,15 @@
 }
 
 .cmts {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    /* height: 50px; */
     padding: 5px;
-    background-color: grey;
-    border: 1px solid green;
+    border-bottom: 1px solid green;
     margin-top: 5px;
 }
 
 .comment-item{
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
 }

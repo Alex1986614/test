@@ -24,12 +24,9 @@ class PostController extends Controller {
     }
 
     public function index() {
-        //return response(Post::all()->jsonSerialize(), Response::HTTP_OK);
-        $posts = Post::all();
-        foreach ($posts as $post) {
-            $post->comments;
-        }
-
+        $posts = Post::with(['comments' => function ($query) {
+            $query->orderBy('reorder', 'asc');
+        }])->get();
         return new PostCollection($posts);
     }
 

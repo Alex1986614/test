@@ -1898,30 +1898,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "comment",
   props: {
-    post: {},
-    comment: ''
+    post: {}
   },
   data: function data() {
     return {
-      visible: false
+      comment: '',
+      visible1: false,
+      visible2: false,
+      curSelected: null
     };
   },
   created: function created() {},
   methods: {
-    addComment: function addComment() {
-      this.visible = !this.visible;
+    addComment1: function addComment1() {
+      this.visible1 = !this.visible1;
     },
-    confirm: function confirm(id) {
+    addComment2: function addComment2(id) {
+      this.visible2 = !this.visible2;
+      this.curSelected = id;
+    },
+    confirm: function confirm(postId, parent) {
       var _this = this;
 
       var uri = "api/comments/create";
       var payload = {
         content: this.comment,
-        reply: '',
-        post_id: id
+        parent: parent,
+        post_id: postId
       };
       this.axios.post(uri, payload).then(function (response) {
         _this.$router.push({
@@ -2198,7 +2218,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.content[data-v-d6b6866e] {\r\n    padding: 10px;\r\n    margin: 10px;\r\n    border: 1px solid #000000;\n}\n.cmts[data-v-d6b6866e] {\r\n    display: -webkit-box;\r\n    display: flex;\r\n    -webkit-box-pack: justify;\r\n            justify-content: space-between;\r\n    -webkit-box-align: center;\r\n            align-items: center;\r\n    padding: 5px;\r\n    background-color: grey;\r\n    border: 1px solid green;\r\n    margin-top: 5px;\n}\n.comment-item[data-v-d6b6866e]{\r\n    display: -webkit-box;\r\n    display: flex;\r\n    -webkit-box-pack: justify;\r\n            justify-content: space-between;\r\n    -webkit-box-align: center;\r\n            align-items: center;\n}\r\n", ""]);
+exports.push([module.i, "\n.content[data-v-d6b6866e] {\r\n    padding: 10px;\r\n    margin: 10px;\r\n    border: 1px solid #000000;\n}\n.cmts[data-v-d6b6866e] {\r\n    /* height: 50px; */\r\n    padding: 5px;\r\n    border-bottom: 1px solid green;\r\n    margin-top: 5px;\n}\n.comment-item[data-v-d6b6866e]{\r\n    display: -webkit-box;\r\n    display: flex;\r\n    -webkit-box-orient: vertical;\r\n    -webkit-box-direction: normal;\r\n            flex-direction: column;\r\n    -webkit-box-pack: justify;\r\n            justify-content: space-between;\r\n    -webkit-box-align: center;\r\n            align-items: center;\n}\r\n", ""]);
 
 // exports
 
@@ -20565,90 +20585,156 @@ var render = function() {
     "div",
     { staticClass: "content" },
     [
-      _c("div", { staticClass: "comment-item" }, [
-        _c("div", [_vm._v(_vm._s(_vm.post.id))]),
-        _vm._v(" "),
-        _c("div", [_vm._v(_vm._s(_vm.post.title))]),
-        _vm._v(" "),
-        _c("div", [_vm._v(_vm._s(_vm.post.body))]),
-        _vm._v(" "),
-        _c("div", [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.addComment()
+      _c("div", {}, [
+        _c("div", { staticClass: "d-flex justify-content-between mb-2" }, [
+          _c("div", [_vm._v(_vm._s(_vm.post.id))]),
+          _vm._v(" "),
+          _c("div", [_vm._v(_vm._s(_vm.post.title))]),
+          _vm._v(" "),
+          _c("div", [_vm._v(_vm._s(_vm.post.body))]),
+          _vm._v(" "),
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-info",
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.addComment1()
+                  }
                 }
-              }
-            },
-            [_vm._v("Add comment")]
-          )
-        ])
+              },
+              [_vm._v("Comment")]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _vm.visible1
+          ? _c("div", [
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.comment,
+                    expression: "comment"
+                  }
+                ],
+                staticStyle: { width: "100%" },
+                domProps: { value: _vm.comment },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.comment = $event.target.value
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-success",
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.confirm(_vm.post.id, null)
+                    }
+                  }
+                },
+                [_vm._v("Confirm")]
+              )
+            ])
+          : _vm._e()
       ]),
       _vm._v(" "),
       _vm._l(_vm.post.comments, function(cmt) {
         return _c("div", { key: cmt.id, staticClass: "cmts" }, [
-          _c("div", [_vm._v(_vm._s(cmt.content))]),
-          _vm._v(" "),
-          _c("div", [_vm._v(_vm._s(cmt.updated_at))]),
-          _vm._v(" "),
           _c(
-            "button",
+            "div",
             {
-              staticClass: "btn btn-danger",
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.del(cmt.id)
-                }
-              }
+              staticClass: "d-flex justify-content-between mb-2",
+              style: { marginLeft: cmt.redepth * 20 + "px" }
             },
-            [_vm._v("Delete")]
-          )
+            [
+              _c("div", [_vm._v(_vm._s(cmt.content))]),
+              _vm._v(" "),
+              _c("div", [_vm._v(_vm._s(cmt.updated_at))]),
+              _vm._v(" "),
+              _c("div", [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-info",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.addComment2(cmt.id)
+                      }
+                    }
+                  },
+                  [_vm._v("Comment")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.del(cmt.id)
+                      }
+                    }
+                  },
+                  [_vm._v("Delete")]
+                )
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _vm.visible2 && cmt.id == _vm.curSelected
+            ? _c("div", [
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.comment,
+                      expression: "comment"
+                    }
+                  ],
+                  staticStyle: { width: "100%" },
+                  domProps: { value: _vm.comment },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.comment = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.confirm(_vm.post.id, cmt)
+                      }
+                    }
+                  },
+                  [_vm._v("Confirm")]
+                )
+              ])
+            : _vm._e()
         ])
-      }),
-      _vm._v(" "),
-      _vm.visible
-        ? _c("div", [
-            _c("textarea", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.comment,
-                  expression: "comment"
-                }
-              ],
-              staticStyle: { width: "100%" },
-              domProps: { value: _vm.comment },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.comment = $event.target.value
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-success",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.confirm(_vm.post.id)
-                  }
-                }
-              },
-              [_vm._v("Confirm")]
-            )
-          ])
-        : _vm._e()
+      })
     ],
     2
   )
