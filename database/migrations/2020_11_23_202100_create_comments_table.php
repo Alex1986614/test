@@ -17,6 +17,7 @@ class CreateCommentsTable extends Migration
             $table->bigIncrements('id');
             $table->text('content');
             $table->integer('post_id')->unsigned();
+            $table->integer('parent_id')->unsigned();
             $table->integer('redepth');
             $table->integer('reorder');
             $table->timestamps();
